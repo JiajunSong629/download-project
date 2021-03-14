@@ -57,7 +57,7 @@ To-do
 - [ ] fix code
     - [x] change pa to pd
     - [x] fix the dotenv in each script
-    - [] deal with the pytorch vggish case
+    - [ ] deal with the pytorch vggish case
     - [x] type annotation for each script
 
     - [x] data
@@ -68,9 +68,9 @@ To-do
         - [x] load_audio
         - [x] load_audio Audio Class
     - [ ] visualization
-        - [] GetSensors
-        - [] Thermal
-        - [] GetEvent
+        - [ ] GetSensors
+        - [ ] Thermal
+        - [ ] GetEvent
     - [ ] make_dataset
         - [x] RandomForest
         - [x] RandomForestExtended
