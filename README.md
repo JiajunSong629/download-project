@@ -14,7 +14,7 @@ Project Organization
     │
     ├── src                <- Source code
     │   │
-    │   ├── data/           <- Scripts to load the sensor data, including audio,
+    │   ├── data/          <- Scripts to load the sensor data, including audio,
     |   |                    radar, water distance, and load cell.
     │   |
     |   |── make_dataset.py <- Generate the dataset.
@@ -23,9 +23,9 @@ Project Organization
     |   |                    generated dataset, and save the model.
     |   |
     |   |—— post_analysis.py <- Calculate the performance metrics based
-    |   |                    on the trained models.
+    |                        on the trained models.
     |
-    |______________________
+    |______________________________
 --------
 
 <p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a>. </small></p>
