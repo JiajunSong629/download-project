@@ -16,11 +16,13 @@ Project Organization
     │   │
     │   ├── data/           <- Scripts to load the sensor data, including audio, radar, water distance, and load cell.
     │   |
-    |   |── make_dataset.py
-    │   │
-    │   └── visualization  <- Scripts to create exploratory and results oriented visualizations
-    │       └── visualize.py
-
+    |   |── make_dataset.py <- Generate the dataset.
+    |   |
+    |   |—— run_randomforest.py <- Run the random forest model on the generated dataset, and save the model.
+    |   |
+    |   |—— post_analysis.py <- Calculate the performance metrics based on the trained models.
+    |
+    |______________________
 --------
 
 <p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a>. </small></p>
