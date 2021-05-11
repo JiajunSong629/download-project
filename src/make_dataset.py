@@ -12,6 +12,7 @@ import pandas as pd
 import torch
 import config
 from typing import Union
+from tqdm.notebook import tqdm
 
 from src.data import load_annotation, load_audio
 from src.data import load_radar, load_water_distance, load_weight_sensor
@@ -43,9 +44,9 @@ class RandomForestDataset:
     """
     A class to hold RandomForest dataset. Specifically, it is used
     to create the dataset for the random-forest approach. Sources of
-    sensors cover the total weight scale, water distance, radar sum,
+    sensors include the total weight scale, water distance, radar sum,
     and the audio delay version 4th, which corrsponds to the keys in
-    `DataGetter` as well.
+    `DataGetter`.
 
     :param user_ids: a list of integers for a list of user ids to
     generate data from.
@@ -167,8 +168,8 @@ class RandomForestDataset:
         """
         labels = []
         first = True
-        for user_id in self.user_ids:
-            print(f"updating {user_id}")
+        for user_id in tqdm(self.user_ids):
+            # print(f"updating {user_id}")
             labels += self.get_label_from_one_user(user_id)
             if first:
                 features = self.get_feature_from_one_user(user_id)
@@ -193,8 +194,8 @@ class RandomForestDataset:
 class RandomForestExtended(RandomForestDataset):
     """
     A child of RandomForestDataset with new source, the audio
-    embedding added to the original dataset. Specifically,
-    the audio embedding will be added by default.
+    embedding added to the original dataset. The audio embedding will be
+    added by default.
     """
 
     def __init__(self, dataset_config):
@@ -286,18 +287,21 @@ class RandomForestExtended(RandomForestDataset):
         """
         labels = []
         first = True
-        for user_id in self.user_ids:
-            print(f"updating {user_id}")
-            labels += self.get_label_from_one_user(user_id)
-            if first:
-                features = self.get_feature_from_one_user(user_id)
-                first = False
-            else:
-                try:
-                    features = np.r_[
-                        features, self.get_feature_from_one_user(user_id)]
-                except:
-                    print(f"appending {user_id} failed")
+        for user_id in tqdm(self.user_ids):
+            # print(f"updating {user_id}")
+            try:
+                labels += self.get_label_from_one_user(user_id)
+                if first:
+                    features = self.get_feature_from_one_user(user_id)
+                    first = False
+                else:
+                    try:
+                        features = np.r_[
+                            features, self.get_feature_from_one_user(user_id)]
+                    except:
+                        print(f"appending {user_id} failed")
+            except:
+                print(f"updating {user_id} failed")
 
         colnames = [
             source_name + "_" + feature_name

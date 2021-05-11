@@ -1,7 +1,8 @@
 import numpy as np
-import pandas as pa
+import pandas as pd
 from scipy.signal import hilbert
 from scipy import signal
+from typing import Optional
 
 
 def train_test_split(use_ids, prop=0.8, seed=1):
@@ -80,17 +81,17 @@ def get_framed_series(series, window_examples, hop_samples):
         strides=(hop_samples*n, n)
     )
     framed_timestamps = [series.index[i*hop_samples] for i in range(nrows)]
-    return pa.DataFrame(framed_values, index=framed_timestamps)
+    return pd.DataFrame(framed_values, index=framed_timestamps)
 
 
 def apply_envelope(sz):
     analytic_signal = hilbert(sz)
-    env_sz = pa.Series(np.abs(analytic_signal), index=sz.index)
+    env_sz = pd.Series(np.abs(analytic_signal), index=sz.index)
     return env_sz
 
 
 def apply_median_filter(sz, filter_window_size):
-    filt_sz = pa.Series(signal.medfilt(
+    filt_sz = pd.Series(signal.medfilt(
         sz, filter_window_size), index=sz.index)
     return filt_sz
 
@@ -104,11 +105,21 @@ def get_start_end_times_of_boolean_sz(sz):
             j = i
             while (j < len(sz)-1) and (sz.values[j+1] == True):
                 j += 1
-            start_end_times.append([ts[i], ts[j]])
+            start_end_times.append([int(ts[i]), int(ts[j])])
             i = j + 1
         else:
             i += 1
-    return start_end_times
+
+    # combine [start, stop] that are connected
+    res = []
+    for start_end_time in start_end_times:
+        if not res:
+            res.append(start_end_time)
+        elif res[-1][1] == start_end_time[0]:
+            res[-1][1] = start_end_time[1]
+        else:
+            res.append(start_end_time)
+    return res
 
 
 def get_area_list_of_intervals(a_list):
@@ -170,3 +181,45 @@ def get_intersection_area_two_list_of_lists(a_list, b_list):
                 a_interval, b_interval
             )
     return ans
+
+
+def get_diff_end_minus_start(arr: np.array) -> float:
+    if len(arr) == 0:
+        return 0
+    st, ed = arr[0], arr[-1]
+    if st > ed:
+        return (st - ed)
+    else:
+        return 0
+
+
+def get_double_iqr(arr: np.array) -> float:
+    """
+    Twice the IQR: 2 * (quantile(0.75) - quantile(0.25))
+    A robust measure of scale.
+    """
+    first, third = np.quantile(arr, q=[0.25, 0.75])
+    return 2 * (third - first)
+
+
+def apply_median_filter(
+    sz: pd.Series,
+    window_size: Optional[int] = 11
+) -> pd.Series:
+    filt_sz = pd.Series(signal.medfilt(sz, window_size))
+    filt_sz.index = sz.index
+    return filt_sz
+
+
+def apply_double_median_filter(
+    sz: pd.Series,
+    window_size: Optional[int] = 11
+) -> pd.Series:
+    """
+    Apply median filter on the sensor twice.
+    Further smooth the data.
+    """
+    filt_sz = pd.Series(signal.medfilt(sz, window_size))
+    filt_sz = pd.Series(signal.medfilt(filt_sz, window_size))
+    filt_sz.index = sz.index
+    return filt_sz

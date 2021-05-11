@@ -94,7 +94,7 @@ class Audio:
         self,
         user_id: int,
         sr: Optional[int] = config.AUDIO_SAMPLING_RATE,
-        pretrained_path: Optional[str] = config.PRETRAINED_PATH
+        pretrained_path: Optional[str] = config.PRETRAINED_VGGISH_PATH
     ) -> None:
         self.user_id = user_id
         self.sr = sr

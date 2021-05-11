@@ -3,10 +3,12 @@ load_radar.py
 Get raw radar data and clean radar sum from the database.
 """
 
-import os
+import numpy as np
 import pandas as pd
 from typing import Optional
 from src.data import load_water_distance
+from src.utils import apply_median_filter
+from scipy.integrate import simps, trapz
 import config
 
 
@@ -65,4 +67,29 @@ def get_radar_sum_clean(
     area_sz = pd.Series(area_d)
     area_sz.index = (area_sz.index-t0)/1000
 
-    return area_sz / 1e6
+    return area_sz / 1e9
+
+
+def get_area_under_radarsum(
+    user_id: int,
+    database_path: Optional[str] = config.DATABASE_PATH,
+    dataframe_path: Optional[str] = config.DATAFRAME_PATH,
+    smooth: Optional[bool] = True,
+    **kwargs
+) -> float:
+    """
+    Get the area under the radar_sum curve.
+
+    :param user_id: an integer of user id
+    :param database_path: a string of the location of database
+    :param dataframe_path: a string of the location of dataframe
+    :param smooth: a boolean for whether to smooth the radar sum series
+    :return: a float number of the area under the radar sum curve.
+    """
+    radar_sum = get_radar_sum_clean(user_id, database_path, dataframe_path)
+    if smooth:
+        radar_sum = apply_median_filter(radar_sum, **kwargs)
+    x = np.array(radar_sum.index)
+    f = radar_sum.values
+
+    return trapz(f, x)
