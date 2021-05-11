@@ -15,15 +15,15 @@ Project Organization
     ├── src                <- Source code
     │   │
     │   ├── data/           <- Scripts to load the sensor data, including audio,
-                            radar, water distance, and load cell.
+    |   |                    radar, water distance, and load cell.
     │   |
     |   |── make_dataset.py <- Generate the dataset.
     |   |
     |   |—— run_randomforest.py <- Run the random forest model on the
-                            generated dataset, and save the model.
+    |   |                    generated dataset, and save the model.
     |   |
     |   |—— post_analysis.py <- Calculate the performance metrics based
-                            on the trained models.
+    |   |                    on the trained models.
     |
     |______________________
 --------
